@@ -19,7 +19,11 @@
 #define PIN_TO_BITMASK(pin)             (digitalPinToBitMask(pin))
 #define IO_REG_TYPE uint8_t
 #define IO_REG_ASM asm("r30")
-#if defined(__AVR_ATmega4809__)
+#if defined(__AVR_ATmega4809__) || defined(__AVR_AVR128DA32__)
+// AVR-Dx parts (e.g. AVR128DA32) use the same struct-style PORT peripheral
+// (DIR, ..., OUT, ..., IN as consecutive registers) as the ATmega4809, so
+// the same -8/-4 offsets from the IN register apply. Add other exact
+// __AVR_<PART>__ macros here for additional AVR-Dx/DB/DD chips as needed.
 #define DIRECT_READ(base, mask)         (((*(base)) & (mask)) ? 1 : 0)
 #define DIRECT_MODE_INPUT(base, mask)   ((*((base)-8)) &= ~(mask))
 #define DIRECT_MODE_OUTPUT(base, mask)  ((*((base)-8)) |= (mask))
